@@ -11,7 +11,7 @@
     <div class="row mb-4">
 
         <div class="col-md-3">
-            <div class="card text-white bg-primary">
+            <div class="card text-white bg-primary card-stat shadow">
                 <div class="card-body">
                     <h5>Total Barang</h5>
                     <h2>{{ $totalBarang }}</h2>
@@ -20,7 +20,7 @@
         </div>
 
         <div class="col-md-3">
-            <div class="card text-white bg-success">
+            <div class="card text-white bg-success card-stat shadow">
                 <div class="card-body">
                     <h5>Total Kategori</h5>
                     <h2>{{ $totalKategori }}</h2>
@@ -29,7 +29,7 @@
         </div>
 
         <div class="col-md-3">
-            <div class="card text-white bg-warning">
+            <div class="card text-white bg-warning card-stat shadow">
                 <div class="card-body">
                     <h5>Stok Menipis</h5>
                     <h2>{{ $stokMenipis }}</h2>
@@ -38,7 +38,7 @@
         </div>
 
         <div class="col-md-3">
-            <div class="card text-white bg-danger">
+            <div class="card text-white bg-danger card-stat shadow">
                 <div class="card-body">
                     <h5>Stok Habis</h5>
                     <h2>{{ $stokHabis }}</h2>
@@ -56,15 +56,22 @@
 
                 <div class="row">
 
-                    <div class="col-md-5">
+                    <div class="position-relative">
 
                         <input
                             type="text"
-                            name="search"
+                            id="search"
                             class="form-control"
-                            placeholder="Cari Nama Barang..."
-                            value="{{ request('search') }}"
-                        >
+                            placeholder="Cari Barang...">
+
+                        <div
+                            id="search-result"
+                            class="list-group position-absolute w-100"
+                            style="
+                                z-index:1000;
+                                display:none;
+                            ">
+                        </div>
 
                     </div>
 
@@ -129,12 +136,13 @@
                 <thead>
 
                     <tr>
-
+                        <th>No</th>
                         <th>Foto</th>
                         <th>Nama Barang</th>
                         <th>Kategori</th>
                         <th>Harga</th>
                         <th>Stok</th>
+                        <th>Aksi</th>
 
                     </tr>
 
@@ -145,6 +153,7 @@
                     @forelse($products as $product)
 
                     <tr>
+                        <td>{{ $loop->iteration }}</td>
 
                         <td width="120">
 
@@ -193,6 +202,14 @@
                             @endif
 
                         </td>
+                        <td>
+
+                            <a href="{{ route('products.show',$product->id) }}"
+                            class="btn btn-info btn-sm">
+                                Detail
+                            </a>
+
+                        </td>
 
                     </tr>
 
@@ -220,5 +237,59 @@
     </div>
 
 </div>
+
+<script>
+
+document
+.getElementById('search')
+.addEventListener('keyup', function(){
+
+    let keyword = this.value;
+
+    if(keyword.length < 1){
+
+        document.getElementById(
+            'search-result'
+        ).style.display = 'none';
+
+        return;
+    }
+
+    fetch(
+        '/search-product?search=' + keyword
+    )
+
+    .then(response => response.json())
+
+    .then(data => {
+
+        let html = '';
+
+        data.forEach(item => {
+
+            html += `
+                <a
+                    href="/products/${item.id}"
+                    class="list-group-item list-group-item-action">
+
+                    ${item.nama_barang}
+
+                </a>
+            `;
+        });
+
+        document.getElementById(
+            'search-result'
+        ).innerHTML = html;
+
+        document.getElementById(
+            'search-result'
+        ).style.display = 'block';
+
+    });
+
+});
+
+</script>
 
 @endsection

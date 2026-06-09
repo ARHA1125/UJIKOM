@@ -10,6 +10,8 @@ Route::get(
     [DashboardController::class, 'index']
 );
 
+Route::get('/search-product', [ProductController::class, 'search']);
+
 Route::resource(
     'products',
     ProductController::class

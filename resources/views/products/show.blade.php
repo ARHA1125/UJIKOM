@@ -58,10 +58,14 @@
 
             </table>
 
-            <a href="{{ route('products.index') }}"
-               class="btn btn-secondary">
-               Kembali
-            </a>
+            <button
+                type="button"
+                class="btn btn-secondary"
+                onclick="history.back()">
+
+                Kembali
+
+            </button>
 
         </div>
 

@@ -22,6 +22,7 @@
     <table class="table table-bordered">
 
         <tr>
+            <th>No</th>
             <th>Foto</th>
             <th>Nama Barang</th>
             <th>Kategori</th>
@@ -33,7 +34,7 @@
         @foreach($products as $item)
 
         <tr>
-
+            <td>{{ $loop->iteration }}</td>
             <td width="120">
 
                 @if($item->foto)
@@ -42,6 +43,7 @@
                 @endif
 
             </td>
+            
 
             <td>{{ $item->nama_barang }}</td>
 

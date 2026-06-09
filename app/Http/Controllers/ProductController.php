@@ -140,4 +140,18 @@ class ProductController extends Controller
             ->route('products.index')
             ->with('success', 'Barang berhasil dihapus');
     }
+    public function search(Request $request)
+{
+    $keyword = $request->search;
+
+    $products = Product::where(
+            'nama_barang',
+            'like',
+            '%' . $keyword . '%'
+        )
+        ->limit(10)
+        ->get();
+
+    return response()->json($products);
+}
 }
