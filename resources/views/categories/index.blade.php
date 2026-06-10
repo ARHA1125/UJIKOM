@@ -22,6 +22,7 @@
         <tr>
             <th>No</th>
             <th>Nama Kategori</th>
+            <th>Deskripsi</th>
             <th>Aksi</th>
         </tr>
 
@@ -29,6 +30,7 @@
         <tr>
             <td>{{ $loop->iteration }}</td>
             <td>{{ $item->nama_kategori }}</td>
+            <td>{{ $item->deskripsi }}</td>
             <td>
 
                 <a href="{{ route('categories.edit',$item->id) }}"

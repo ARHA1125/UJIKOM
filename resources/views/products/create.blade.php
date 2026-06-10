@@ -111,7 +111,7 @@
 
         <div class="text-end mt-4">
 
-            <a href="{{ route('products.index') }}"
+            <a href="{{ route('dashboard') }}"
                class="btn btn-secondary">
 
                Batal

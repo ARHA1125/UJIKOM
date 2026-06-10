@@ -10,16 +10,28 @@ use Illuminate\Support\Facades\Storage;
 class ProductController extends Controller
 {
     public function index()
-    {
-        $products = Product::with('category')
-            ->latest()
-            ->get();
+{
+    $products = Product::with('category')->get();
+    $categories = Category::all();
 
-        return view(
-            'products.index',
-            compact('products')
-        );
-    }
+    $totalBarang = Product::count();
+    $totalKategori = Category::count();
+
+    $stokMenipis = Product::where('stok', '>', 0)
+                          ->where('stok', '<', 20)
+                          ->count();
+
+    $stokHabis = Product::where('stok', 0)->count();
+
+    return view('dashboard', compact(
+        'products',
+        'categories',
+        'totalBarang',
+        'totalKategori',
+        'stokMenipis',
+        'stokHabis'
+    ));
+}
 
     public function create()
     {
@@ -60,7 +72,7 @@ class ProductController extends Controller
         ]);
 
         return redirect()
-            ->route('products.index')
+            ->route('dashboard')
             ->with('success', 'Barang berhasil ditambahkan');
     }
 
@@ -122,7 +134,7 @@ class ProductController extends Controller
         ]);
 
         return redirect()
-            ->route('products.index')
+            ->route('dashboard')
             ->with('success', 'Barang berhasil diupdate');
     }
 
@@ -137,7 +149,7 @@ class ProductController extends Controller
         $product->delete();
 
         return redirect()
-            ->route('products.index')
+            ->route('dashboard')
             ->with('success', 'Barang berhasil dihapus');
     }
     public function search(Request $request)

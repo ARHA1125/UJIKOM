@@ -53,9 +53,7 @@
                 <a href="/" class="nav-link">Dashboard</a>
             </li>
 
-            <li class="nav-item">
-                <a href="/products" class="nav-link">Product</a>
-            </li>
+           
 
             <li class="nav-item">
                 <a href="/categories" class="nav-link">Kategori</a>

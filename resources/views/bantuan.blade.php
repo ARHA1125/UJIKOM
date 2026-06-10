@@ -14,7 +14,7 @@
 
         <ol>
 
-            <li>Masuk ke menu Barang untuk mengelola data produk.</li>
+            <li>Masuk ke menu Produk untuk mengelola data produk.</li>
 
             <li>Masuk ke menu Kategori untuk mengelola kategori produk.</li>
 

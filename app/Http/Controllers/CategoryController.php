@@ -7,80 +7,63 @@ use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
+    // Menampilkan daftar kategori
     public function index()
     {
-        $categories = Category::latest()
-            ->get();
+        $categories = Category::latest()->get();
 
-        return view(
-            'categories.index',
-            compact('categories')
-        );
+        return view('categories.index', compact('categories'));
     }
 
+    // Menampilkan form tambah kategori
     public function create()
     {
         return view('categories.create');
     }
 
+    // Menyimpan kategori baru
     public function store(Request $request)
     {
-        $request->validate([
-            'nama_kategori' => 'required'
+        $validated = $request->validate([
+            'nama_kategori' => 'required|string|max:255',
+            'deskripsi'     => 'nullable|string',
         ]);
 
-        Category::create([
-            'nama_kategori' =>
-            $request->nama_kategori
-        ]);
+        Category::create($validated);
 
         return redirect()
             ->route('categories.index')
-            ->with(
-                'success',
-                'Kategori berhasil ditambahkan'
-            );
+            ->with('success', 'Kategori berhasil ditambahkan.');
     }
 
+    // Menampilkan form edit
     public function edit(Category $category)
     {
-        return view(
-            'categories.edit',
-            compact('category')
-        );
+        return view('categories.edit', compact('category'));
     }
 
-    public function update(
-        Request $request,
-        Category $category
-    ) {
-
-        $request->validate([
-            'nama_kategori' => 'required'
+    // Menyimpan hasil edit
+    public function update(Request $request, Category $category)
+    {
+        $validated = $request->validate([
+            'nama_kategori' => 'required|string|max:255',
+            'deskripsi'     => 'nullable|string',
         ]);
 
-        $category->update([
-            'nama_kategori' =>
-            $request->nama_kategori
-        ]);
+        $category->update($validated);
 
         return redirect()
             ->route('categories.index')
-            ->with(
-                'success',
-                'Kategori berhasil diupdate'
-            );
+            ->with('success', 'Kategori berhasil diperbarui.');
     }
 
+    // Menghapus kategori
     public function destroy(Category $category)
     {
         $category->delete();
 
         return redirect()
             ->route('categories.index')
-            ->with(
-                'success',
-                'Kategori berhasil dihapus'
-            );
+            ->with('success', 'Kategori berhasil dihapus.');
     }
 }

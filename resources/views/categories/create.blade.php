@@ -22,6 +22,14 @@
                    name="nama_kategori"
                    class="form-control">
         </div>
+        <div class="mb-3">
+    <label class="form-label">Deskripsi</label>
+    <textarea
+        name="deskripsi"
+        class="form-control"
+        rows="3"
+        placeholder="Masukkan deskripsi kategori">{{ old('deskripsi') }}</textarea>
+</div>
 
         <button class="btn btn-success">
             Simpan

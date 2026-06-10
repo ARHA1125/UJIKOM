@@ -56,44 +56,27 @@
 
                 <div class="row">
 
-                    <div class="position-relative">
+                    <div class="col-md-5">
 
                         <input
                             type="text"
                             id="search"
                             class="form-control"
-                            placeholder="Cari Barang...">
-
-                        <div
-                            id="search-result"
-                            class="list-group position-absolute w-100"
-                            style="
-                                z-index:1000;
-                                display:none;
-                            ">
-                        </div>
+                            placeholder="Cari Nama Barang...">
 
                     </div>
 
                     <div class="col-md-4">
 
-                        <select
-                            name="category"
-                            class="form-control">
+                        <select id="categoryFilter" class="form-control">
 
-                            <option value="">
-                                Semua Kategori
-                            </option>
+                            <option value="">Semua Kategori</option>
 
                             @foreach($categories as $category)
 
-                            <option
-                                value="{{ $category->id }}"
-                                {{ request('category') == $category->id ? 'selected' : '' }}>
-
-                                {{ $category->nama_kategori }}
-
-                            </option>
+                                <option value="{{ strtolower($category->nama_kategori) }}">
+                                    {{ $category->nama_kategori }}
+                                </option>
 
                             @endforeach
 
@@ -104,21 +87,15 @@
                     <div class="col-md-3">
 
                         <button
-                            class="btn btn-primary">
+                            type="button"
+                            class="btn btn-secondary w-100"
+                            onclick="resetFilter()">
 
-                            Cari
+                            Reset
 
                         </button>
 
-                        <a href="/"
-                           class="btn btn-secondary">
-
-                           Reset
-
-                        </a>
-
                     </div>
-
                 </div>
 
             </form>
@@ -131,6 +108,15 @@
 
         <div class="card-body">
 
+        <div class="d-flex justify-content-between align-items-center mb-3">
+
+    <h5 class="mb-0">Daftar Barang</h5>
+
+    <a href="{{ route('products.create') }}" class="btn btn-primary">
+        + Tambah Barang
+    </a>
+
+</div>
             <table class="table table-bordered">
 
                 <thead>
@@ -148,7 +134,7 @@
 
                 </thead>
 
-                <tbody>
+                <tbody id="productTable">
 
                     @forelse($products as $product)
 
@@ -203,12 +189,32 @@
 
                         </td>
                         <td>
+                            <div class="d-flex gap-1">
 
-                            <a href="{{ route('products.show',$product->id) }}"
-                            class="btn btn-info btn-sm">
-                                Detail
-                            </a>
+                                <a href="{{ route('products.show', $product->id) }}"
+                                class="btn btn-info btn-sm">
+                                    Detail
+                                </a>
 
+                                <a href="{{ route('products.edit', $product->id) }}"
+                                class="btn btn-warning btn-sm">
+                                    Edit
+                                </a>
+
+                                <form action="{{ route('products.destroy', $product->id) }}"
+                                    method="POST"
+                                    onsubmit="return confirm('Yakin ingin menghapus barang ini?')">
+
+                                    @csrf
+                                    @method('DELETE')
+
+                                    <button type="submit" class="btn btn-danger btn-sm">
+                                        Hapus
+                                    </button>
+
+                                </form>
+
+                            </div>
                         </td>
 
                     </tr>
@@ -228,6 +234,12 @@
 
                     @endforelse
 
+                    <tr id="no-data-row" style="display: none;">
+                        <td colspan="7" class="text-center text-danger fw-bold">
+                            Barang tidak ada
+                        </td>
+                    </tr>
+
                 </tbody>
 
             </table>
@@ -239,57 +251,56 @@
 </div>
 
 <script>
+function filterTable() {
 
-document
-.getElementById('search')
-.addEventListener('keyup', function(){
+    const keyword = document.getElementById("search").value.toLowerCase().trim();
+    const kategori = document.getElementById("categoryFilter").value.trim().toLowerCase();
 
-    let keyword = this.value;
+    const rows = document.querySelectorAll("#productTable tr:not(#no-data-row)");
 
-    if(keyword.length < 1){
+    let ditemukan = false;
 
-        document.getElementById(
-            'search-result'
-        ).style.display = 'none';
+    rows.forEach(function(row) {
 
-        return;
-    }
+        // Lewati baris kosong atau baris yang tidak memiliki 7 sel (No, Foto, Nama, Kategori, Harga, Stok, Aksi)
+        if (row.cells.length < 7) {
+            return;
+        }
 
-    fetch(
-        '/search-product?search=' + keyword
-    )
+        const namaBarang = row.cells[2].textContent.toLowerCase();
+        const namaKategori = row.cells[3].textContent.trim().toLowerCase();
 
-    .then(response => response.json())
+        const cocokNama = namaBarang.includes(keyword);
+        const cocokKategori = kategori === "" || namaKategori === kategori;
 
-    .then(data => {
-
-        let html = '';
-
-        data.forEach(item => {
-
-            html += `
-                <a
-                    href="/products/${item.id}"
-                    class="list-group-item list-group-item-action">
-
-                    ${item.nama_barang}
-
-                </a>
-            `;
-        });
-
-        document.getElementById(
-            'search-result'
-        ).innerHTML = html;
-
-        document.getElementById(
-            'search-result'
-        ).style.display = 'block';
+        if (cocokNama && cocokKategori) {
+            row.style.display = "";
+            ditemukan = true;
+        } else {
+            row.style.display = "none";
+        }
 
     });
 
-});
+    document.getElementById("no-data-row").style.display =
+        ditemukan ? "none" : "";
 
+}
+
+function resetFilter() {
+
+    document.getElementById("search").value = "";
+    document.getElementById("categoryFilter").value = "";
+
+    filterTable();
+
+}
+
+document.getElementById("search")
+    .addEventListener("keyup", filterTable);
+
+document.getElementById("categoryFilter")
+    .addEventListener("change", filterTable);
 </script>
 
 @endsection

@@ -3,26 +3,11 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CategoryController;
-use App\Http\Controllers\DashboardController;
 
-Route::get(
-    '/',
-    [DashboardController::class, 'index']
-);
+Route::get('/', [ProductController::class, 'index'])->name('dashboard');
 
-Route::get('/search-product', [ProductController::class, 'search']);
+Route::resource('products', ProductController::class)->except(['index']);
 
-Route::resource(
-    'products',
-    ProductController::class
-);
+Route::resource('categories', CategoryController::class);
 
-Route::resource(
-    'categories',
-    CategoryController::class
-);
-
-Route::view(
-    '/bantuan',
-    'bantuan'
-);
+Route::view('/bantuan', 'bantuan');

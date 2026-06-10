@@ -100,7 +100,7 @@
             Update
         </button>
 
-        <a href="{{ route('products.index') }}"
+        <a href="{{ route('dashboard') }}"
            class="btn btn-secondary">
            Kembali
         </a>
